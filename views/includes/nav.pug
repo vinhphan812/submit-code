@@ -1,0 +1,33 @@
+nav.navbar.navbar-expand-lg.navbar-dark.dark.text-light
+     .container
+          a.navbar-brand(href='/').d-flex.justify-content-center.align-items-center
+               span.fw-bold <
+               span.fw-italic.fs-3 #{APP_NAME.split(" ")[0]}
+               span.fw-bold.fs-3 #{APP_NAME.split(" ")[1]}
+               span.fw-bold />
+          button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+               span.navbar-toggler-icon
+          #navbarSupportedContent.collapse.navbar-collapse
+               ul.navbar-nav.me-auto.mb-2.mb-lg-0
+                    if menu
+                         for item in menu 
+                              li.nav-item
+                                   a.nav-link.active(aria-current='page' href=item.link)= item.name
+               .d-flex.mb-lg-0.mb-2
+                    if !isLogin
+                         if user
+                              .dropdown
+                                   button#dropdownMenuButton1.btn.btn-light.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-expanded='false')
+                                        img.user-avatar-small(src=`/public/images/${user.role}.png` alt=user.name)
+                                        span= user.name
+                                   ul.dropdown-menu(aria-labelledby='dropdownMenuButton1')
+                                        li
+                                             a.dropdown-item(href='/user/profile') Hồ sơ
+                                        li
+                                             a.dropdown-item(href='/logout') Đăng xuất
+                         else 
+                              if !listNotDisplaySignNav.includes(path)
+                                   .px-2.d-flex.align-items-center
+                                        a.text-light(href="/sign_in") Đăng nhập
+                                        span.px-2 /
+                                        a.text-light(href="/sign_up") Đăng ký

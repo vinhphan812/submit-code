@@ -1,0 +1,61 @@
+extend ../../layouts/common.pug
+
+block content 
+     .row.justify-content-center.bg-white.p-5.shadow-sm
+          form.col-md-12.col-xl-6(action=`/admin/exercises/${isCreate ? "create" : body.id + "/update"}` method="POST" id=isCreate ? "create" : "update")
+               .h2.text-center.text-capitalize= seo.title
+               if errors && errors.length
+                    each val in errors
+                         .alert.alert-danger.mx-5= val
+               .mb-3
+                    label.form-label(for="name") Tên
+                    input#name.form-control(type='text' name="name" placeholder="Bài Tập..." value=body ? body.name : "")
+               .mb-3.form-floating
+                    textarea#description.form-control(placeholder='Mô tả' style='height: 100px' name="description")= body ? body.description : ""
+                    label(for='description') Mô tả
+
+               .d-flex.justify-content-center
+                    input(type="hidden" name="test_cases" value="")
+                    input.btn.btn-primary.px-5(type='submit' value=isCreate ? "Tạo" : "Lưu")
+     
+          .d-flex.justify-content-end.my-2
+               button.btn.btn-outline-primary.add Thêm testcase
+          
+          p.text-danger (*) Lưu ý: input được viết cách nhau bởi dấu "," để chương trình hiểu và chạy test. Ví dụ như "4,3" => lần đầu nhập 4, lần 2 nhập 3 
+          table.table
+               thead
+                    tr
+                         th(scope="col") #
+                         th(scope="col") Tên
+                         th(scope="col") Input
+                         th(scope="col") Output
+                         th
+               tbody
+                    if body && body.test_cases
+                         each val, i in body.test_cases
+                              if val._id
+                                   tr 
+                                        td= i + 1
+                                        td
+                                             span= val.name
+                                        td
+                                             span= val.input
+                                        td
+                                             span= val.output
+                                        td
+                                             if val._id
+                                                  a(href=`/admin/test_cases/${val._id}/update`) chi tiết
+                                                  button.btn.btn-link.delete.bi.bi-trash.text-danger
+                              else 
+                                   tr 
+                                        td= i + 1
+                                        td
+                                             input.form-control(type='text' name='test_case' placeholder='TestCase...' value=val.name || "")
+                                        td
+                                             input.form-control(type='text' name='input' placeholder='input viết cách nhau ","' value=val.input || "")
+                                        td
+                                             input.form-control(type='text' name='output' placeholder='parse output vào đây' value=val.output || "")
+                                        
+
+block script
+     script(type="text/javascript" src="/public/js/exercise.js")

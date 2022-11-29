@@ -1,0 +1,16 @@
+extend ../layouts/common.pug
+
+block content 
+     .h2.mb-4 Quản Lý
+     if role == "TEACHER"
+          .row.mb-4
+               .col-sm-6.mb-2
+                    a.card.text-decoration-none(href="/admin/users")
+                         .card-body
+                              h5.card-title Người Dùng
+                              p.card-text.text-muted Quản lý người dùng trên #{APP_NAME}
+               .col-sm-6
+                    a.card.text-decoration-none(href="/admin/lessons")
+                         .card-body
+                              h5.card-title Buổi Học
+                              p.card-text.text-muted Quản lý buổi học trên #{APP_NAME}

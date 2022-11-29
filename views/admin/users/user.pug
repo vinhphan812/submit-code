@@ -1,0 +1,26 @@
+extend ../../layouts/common.pug
+
+block content 
+     .row.justify-content-center
+          form.col-md-12.col-xl-6(action=`/admin/users/${isCreate ? "create" : body.id + "/update"}` method="POST" id=isCreate ? "create" : "update").bg-white.p-5.shadow-sm
+               .h2.text-center.text-capitalize= seo.title
+               if errors && errors.length
+                    each val in errors
+                         .alert.alert-danger.mx-5= val
+               .mb-3
+                    label.form-label(for="username") Mã Số
+                    input#name.form-control(type='text' name="username" placeholder="Tên đăng nhập" value=body ? body.username : "")
+               .mb-3
+                    label.form-label(for="name") Tên Người Dùng
+                    input.form-control(type='text' name="name" placeholder="Tên" value=body ? body.name : "")
+               .mb-3
+                    label.form-label(for="email") Email
+                    input#name.form-control(type='text' name="email" placeholder="Email" value=body ? body.email : "")
+               .mb-3
+                    label.form-label(for="") Quyền
+                    select.form-select(aria-label='select role' name="role")
+                         each val in role
+                              option(value=val selected=body ? body.role == val : val=="STUDENT")= val
+
+               .d-flex.justify-content-center
+                    input.btn.btn-primary.px-5(type='submit' value=isCreate ? "Tạo" : "Lưu")

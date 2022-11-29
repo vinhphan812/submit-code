@@ -1,0 +1,3 @@
+{
+	"ignore": ["databases/*", "public/*", "modules/*", "mudules/*"]
+}

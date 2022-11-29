@@ -1,0 +1,21 @@
+extend ../layouts/common.pug
+
+block content
+     .row.justify-content-center
+          form.col-md-12.col-xl-6(action="/sign_in" method="POST" id="login").bg-white.p-5.shadow-sm
+               if errors && errors.length
+                    each val in errors
+                         .alert.alert-danger.mx-5= val
+               div.h2.text-center Đăng nhập tài khoản
+               .mb-3
+                    label.form-label(for='name') Tên đăng nhập
+                    input#name.form-control(type='text' name="user")
+               .mb-3
+                    label.form-label(for='password') Mật khẩu
+                    input#password.form-control(type='password' name="pass")
+               .d-flex.justify-content-between.mb-2
+                    .form-text Bạn đã có tài khoản chưa? 
+                         a(href="/sign_up") tạo tài khoản mới
+                    a.form-text(href="/forgot-password") Quên mật khẩu?
+               .d-flex.justify-content-center
+                    input.btn.btn-primary.px-5(type='submit' value="Đăng nhập")

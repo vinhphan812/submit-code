@@ -1,0 +1,10 @@
+extend ../../layouts/common.pug
+
+block content
+     .h1= lesson.name
+     .h4= lesson.description
+
+     ul 
+          each exercise in lesson.exercises
+               li
+                    a(href=`/lessons/${lesson._id}/exercises/${exercise._id}`)= exercise.name

@@ -1,0 +1,15 @@
+extend ../layouts/common.pug
+
+block content 
+     .row.justify-content-evenly.row-cols-3
+          each lesson in lessons
+               .card(style='width: 18rem;')
+                    .card-body.row
+                         .col-8
+                              h5.card-title= lesson.name
+                              p.card-text.small= lesson.description
+                         //- .progress
+                              .progress-bar(role='progressbar' aria-valuenow='10' aria-valuemin='0' aria-valuemax=lesson.count)
+                         .col-4
+                              a.btn.btn-primary.d-flex.justify-content-center.align-items-center(href='/lessons/' + lesson.id)
+                                   i.bi.bi-play.fs-3

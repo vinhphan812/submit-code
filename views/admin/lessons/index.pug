@@ -1,0 +1,30 @@
+extend ../../layouts/common.pug
+
+block content
+     a.btn.btn-primary.my-2(href="/admin/lessons/create") 
+          i.bi.bi-plus.me-2
+          span Tạo 
+     table.table
+          thead
+               tr
+                    th(scope="col") #
+                    th(scope="col") Tên
+                    th(scope="col") Mô tả
+                    th(scope="col") Số Bài tập
+                    th(scope="col") 
+          tbody
+               each val, index in lessons
+                    tr(lesson-id=val.id)
+                         td= index+1
+                         td= val.name
+                         td= val.description
+                         td= val.count
+                         td.d-flex.justify-content-end.align-items-center
+                              a.me-2(href="/admin/lessons/" + val.id +"/update") chỉnh sửa
+                              if user.id != val.id
+                                   button.btn.btn-link.delete.bi.bi-trash.text-danger
+     form(action="" method="GET" name="delete")
+block script
+     script(type="text/javascript" src="/public/js/delete.js")
+     script.
+          const id_attr = "lesson-id", delete_unit_lang = "Buổi Học", delete_type = "lessons";

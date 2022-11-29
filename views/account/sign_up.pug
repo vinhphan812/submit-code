@@ -1,0 +1,23 @@
+extend ../layouts/common.pug
+
+block content
+     form(action="/sign_up" method="POST" id="sign_up").bg-white.p-5.shadow-sm
+          if errors && errors.length
+               each val in errors
+                    .alert.alert-danger.mx-5= val
+          .container
+               .h2.text-center Đăng ký tài khoản
+               .row.justify-content-center
+                    .col-md-6.container
+                         .row.mb-2
+                              input.col-md-6.form-control(type="email" name="email" placeholder="Email" value=body?body.email : "")
+                         .row.mb-2
+                              input.col-md-6.form-control(type="text" name="username" placeholder="Mã số sinh viên" value=body?body.username : "")
+                         .row.mb-2
+                              input.col-md-6.form-control(type='password' name="password" placeholder="Mật khẩu" value=body?body.password : "")
+                         .row.mb-2
+                              input.col-md-6.form-control(type='password' name="passwordConfirm" placeholder="Xác nhận mật khẩu" value=body?body.passwordConfirm : "")
+                              .form-text 
+                                   span Bạn đã có tài khoản? 
+                                   a(href="/sign_in") đăng nhập
+                         input.form-control.mb-2.btn.btn-primary(type="submit" value="Đăng ký")

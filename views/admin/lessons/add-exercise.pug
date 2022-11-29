@@ -1,0 +1,43 @@
+extend ../../layouts/common.pug
+
+block content 
+     .row.justify-content-center.bg-white.p-5.shadow-sm
+          form.col-md-12.col-xl-6(action=`/admin/lessons/${isCreate ? "create" : body.id + "/update"}` method="POST" id=isCreate ? "create" : "update")
+               .h2.text-center.text-capitalize= seo.title
+               if errors && errors.length
+                    each val in errors
+                         .alert.alert-danger.mx-5= val
+               .mb-3
+                    label.form-label(for="name") Bài Tập
+                    input#name.form-control(type='text' name="name" placeholder="Buổi Học" value=body ? body.name : "")
+               .mb-3.form-floating
+                    textarea#description.form-control(placeholder='Mô tả' style='height: 100px' name="description")= body ? body.description : ""
+                    label(for='description') Mô tả
+               if isCreate
+                    .mb-3
+                         label.form-label(for="total_test_case") Số Lượng Bài Tập
+                         input.form-control(id="total_test_case" type='number' name="total_test_case" placeholder="Bài Tập" min="0" value=body && total_test_case ? body.total_test_case : (body && body.exercises ? body.exercises.length : 0) ) 
+               .d-flex.justify-content-center
+                    if isCreate
+                         input(type="hidden" name="testcases" value="")
+                    input.btn.btn-primary.px-5(type='submit' value=isCreate ? "Tạo" : "Lưu")
+          if isCreate
+               table.table
+                    thead
+                         tr
+                              th(scope="col") #
+                              th(scope="col") Tên
+                              th(scope="col") Input
+                              th(scope="col") Output
+                    tbody
+                         if body && body.exercises
+                              each val, i in body.exercises
+                                   tr 
+                                        td= i + 1
+                                        td
+                                             input.form-control(type='text' name='exercise' placeholder='Bài tập...' value=val.name || "")
+                                        td
+                                             input.form-control(type='text' name='description' placeholder='Đề hoặc mô tả bài tập' value=val.description || "")
+                                        td
+block script 
+     script(type="text/javascript" src="/public/js/exercise-add.js")

@@ -1,0 +1,33 @@
+{
+	"name": "SubmitCode",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node app.js",
+		"dev": "nodemon --inspect app.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"md5": "^2.3.0",
+		"moment": "^2.29.4",
+		"mongoose": "^6.7.3",
+		"morgan": "^1.10.0",
+		"node-csharp": "^0.2.4",
+		"nodemailer": "^6.8.0",
+		"pug": "^3.0.2",
+		"request": "^2.88.2",
+		"request-promise": "^4.2.6",
+		"serve-favicon": "^2.5.0",
+		"string-to-stream": "^3.0.1"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.20"
+	}
+}
