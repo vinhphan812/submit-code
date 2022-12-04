@@ -2,7 +2,7 @@ extend ../../layouts/common.pug
 
 block content 
      .row.justify-content-center.bg-white.p-5.shadow-sm
-          form.col-md-12.col-xl-6(action=`/admin/exercises/${isCreate ? "create" : body.id + "/update"}` method="POST" id=isCreate ? "create" : "update")
+          form.col-md-12.col-xl-8(action=`/admin/exercises/${isCreate ? "create" : body.id + "/update"}` method="POST" id=isCreate ? "create" : "update")
                .h2.text-center.text-capitalize= seo.title
                if errors && errors.length
                     each val in errors
@@ -13,6 +13,44 @@ block content
                .mb-3.form-floating
                     textarea#description.form-control(placeholder='Mô tả' style='height: 100px' name="description")= body ? body.description : ""
                     label(for='description') Mô tả
+               .mb-3
+                    label(for='source') Source Code
+                    textarea#source.form-control(placeholder='Code...' style='height: 300px' name="source")= body ? body.source : ""
+               .mb-3.row
+                    .col-md-9.px-2
+                         label(for='generator') Auto Generator Input Template
+                         textarea#generator.form-control(placeholder='Template generator: "Number" "String" "Float"...' style='height: 100px' name="template")= body ? body.template : ""
+                         #checker.invalid-feedback Chuẩn input chưa đúng
+                    .col-md-3
+                         label.form-label(for="name") Số Lượng TestCase
+                         input#number.form-control(type='number' name="number" placeholder="Số lượng" min="0" value=body && body.number ? body.number : 0)
+               .h5 Ví dụ:
+               ul
+                    li
+                         .h6 String
+                         code.small
+                              p "_string{template: ## ### ####}" => "ah gai pthf"
+                              p "_string{length: 6}" => "usogcq"
+                    li
+                         .h6 Number|Int|Float
+                         code.small
+                              p "_number{min: 0, max: 20}"=> "14"
+                              p "_int{min: 0, max: 20}"
+                              p "_float{min: 0, max: 20, decimals: 5}" => "9.36123"
+                    li
+                         .h6 List
+                         code.small
+                              p "_int[]{length: 5, min: 0, max: 20}" => "0" "1" "2" "3" "4" // mặc định type là breakline
+                              p "_int[]{length: 5, min: 0, max: 20, type: inline}" => "8 16 9 0 18"
+                              p "_float[]{length: 5, min: 0, max: 20}" => "13.41914" "11.87234" "9.53094" "4.03834" "4.47845"
+                    li
+                         .h6 Boolean
+                         code.small
+                              p "_bool" => "false"
+                              p "_boolean" => "false"
+                    li
+                         .h6 sử dụng với _ref
+                         code.small "_int" "_int[]{length: _ref[0], min: 0, max: 20, type: inline}" => "13" "0 1 2 3 4 5 6 7 8 9 10 11 12"
 
                .d-flex.justify-content-center
                     input(type="hidden" name="test_cases" value="")
@@ -21,7 +59,7 @@ block content
           .d-flex.justify-content-end.my-2
                button.btn.btn-outline-primary.add Thêm testcase
           
-          p.text-danger (*) Lưu ý: input được viết cách nhau bởi dấu "," để chương trình hiểu và chạy test. Ví dụ như "4,3" => lần đầu nhập 4, lần 2 nhập 3 
+          p.text-danger (*) Lưu ý: input được viết theo dạng chuổi: "input1" "input2"
           table.table
                thead
                     tr

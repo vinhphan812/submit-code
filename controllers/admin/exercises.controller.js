@@ -1,46 +1,46 @@
 const { Exercise, TestCase } = require("../../models");
+const { runEXE } = require("../../modules/compiler");
 
 module.exports = {
-	updateHandle: async (req, res, next) => {
-		const { id } = req.params;
-		const { test_cases, ...body } = res.locals.body;
-		const { errors } = res.locals;
+    updateHandle: async (req, res, next) => {
+        const { id } = req.params;
+        const { test_cases, exePath, ...body } = res.locals.body;
+        const { errors } = res.locals;
 
-		if (errors.length) return res.render("admin/exercises/exercise");
+        if (errors.length) return res.render("admin/exercises/exercise");
 
-		await Exercise.updateOne({ _id: id }, { $set: body });
+        await Exercise.updateOne({ _id: id }, { $set: body });
 
-		if (test_cases && test_cases.length) {
-			let count = await TestCase.count({ exercise: id });
-			await TestCase.create(
-				test_cases.map((e) => {
-					e.exercise = id;
-					e.index = ++count;
-					return e;
-				})
-			);
-		}
-		res.redirect(`/admin/exercises/${id}/update`);
-	},
-	updatePage: async (req, res, next) => {
-		const { id } = req.params;
+        if (test_cases && test_cases.length) {
+            await TestCase.deleteMany({ exercise: id });
 
-		const exercise = await Exercise.findOne({ _id: id });
+            for (let i = 0; i < test_cases.length; i++) {
+                const { stdout } = await runEXE(exePath, test_cases[i].input.match(/(?<=(['"])\b)(?:(?!\1|\\).|\\.)*(?=\1)/g), null);
+                test_cases[i] = {
+                    ...test_cases[i], exercise: id, index: i, output: stdout,
+                };
+            }
+            await TestCase.create(test_cases);
+        }
+        res.redirect(`/admin/exercises/${ id }/update`);
+    }, updatePage: async (req, res, next) => {
+        const { id } = req.params;
 
-		if (!exercise) return next();
+        const exercise = await Exercise.findOne({ _id: id });
 
-		// @ts-ignore
-		exercise.test_cases = await TestCase.getByExercise(exercise._id);
+        if (!exercise) return next();
 
-		res.locals.body = exercise;
-		// @ts-ignore
-		res.locals.seo.title = "Cập nhật " + exercise.name;
+        // @ts-ignore
+        exercise.test_cases = await TestCase.getByExercise(exercise._id);
 
-		res.render("admin/exercises/exercise");
-	},
-	deleteHandle: async (req, res) => {
-		const { id } = req.params;
+        res.locals.body = exercise;
+        // @ts-ignore
+        res.locals.seo.title = "Cập nhật " + exercise.name;
 
-		await Exercise.updateOne({ _id: id }, { $set: { is_delete: true } });
-	},
+        res.render("admin/exercises/exercise");
+    }, deleteHandle: async (req, res) => {
+        const { id } = req.params;
+
+        await Exercise.updateOne({ _id: id }, { $set: { is_delete: true } });
+    },
 };

@@ -1,38 +1,47 @@
-extend ../../layouts/common.pug
+extend ../../layouts/submit.pug
 
 block content
-     .bg-white.p-5.shadow-sm
-          .h5= exercise.name
-          p!= exercise.description
-          hr
-          .row(style="height: 600px")
-               .col-md-3.h-100.overflow-auto
+     .bg-white.p-5.shadow-sm.h-100.d-flex.flex-column.justify-content-evenly
+          .card
+               .card-body
+                    .h5= exercise.name
+                    p!= exercise.description
+          .row.flex-grow-1.mt-2
+               .col-md-4.overflow-auto#test_case
                     div
                          if exercise.testcases
                               each val, i in exercise.testcases
                                    .card.mb-2(id=val.id)
-                                        .card-header= val.name
+                                        .card-header.fw-bold
+                                             span= val._doc.name
+                                             i.bi.bi-check
                                         .card-body
                                              p.card-text
-                                                  span.text-muted Input: 
-                                                  span.fw-bold= val.input
+                                                  span.text-muted Đầu vào:
+                                                  span.fw-bold= val._doc.input
                                              p.card-text
-                                                  span.text-muted Output:  
-                                                  span.fw-bold
+                                                  span.text-muted Đầu ra thực tế:
+                                                  span.fw-bold= typeof val.success == "boolean" ? val.output : ""
                                              p.card-text
-                                                  span.text-muted Exact: 
-                                                  span.fw-bold(style="white-space: pre") #{val.output}
-               .col-md-9
+                                                  span.text-muted Đầu ra mong muốn:
+                                                  span.fw-bold(style="white-space: pre") #{val._doc.output}
+               .col-md-8
                     #Content.w-100.h-100
           hr
-          form(action="" method="post")
+          form(action=`/exercises/${exercise._id}/submit` method="post")
                input(type="hidden" name="source" value="")
+          .errors.alert.alert-danger.flex-grow-1.my-0.mx-3(class=errors && errors.length > 0 ? "d-block" : "")
+               each val in errors
+                    span= val
           .d-flex.justify-content-end.my-2
-               button.btn.btn-primary.me-2#test Chạy thử (#{test_remaining})
-               button.btn.btn-outline-primary#run Nộp Bài (#{submit_remaining})
+               if test_remaining > 0
+                    button.btn.btn-primary.me-2#test Chạy thử (#{test_remaining})
+               if submit_remaining > 0
+                    button.btn.btn-outline-primary#run Nộp Bài (#{submit_remaining})
 
 block script
      script.
+          var exerciseId = "#{exercise._id}"
           var require = {paths: {vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs"}};
      script(src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js" integrity="sha512-6bIYsGqvLpAiEBXPdRQeFf5cueeBECtAKJjIHer3BhBZNTV3WLcLA8Tm3pDfxUwTMIS+kAZwTUvJ1IrMdX8C5w==" crossorigin="anonymous" referrerpolicy="no-referrer")
      script(src="/public/js/submit.js")

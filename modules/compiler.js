@@ -1,205 +1,169 @@
-"use strict";
-
 const { v1 } = require("uuid");
-const base = "compilers",
-	outBase = "outputs";
+const base = "compilers";
 
 const fs = require("fs");
-const { exec, spawn } = require("child_process");
-
-const fromSource = function (programSource) {
-	var options =
-		arguments.length <= 1 || arguments[1] === undefined
-			? {}
-			: arguments[1];
-	var callback = arguments[2];
-
-	const id = v1();
-
-	const path = `${base}/${id}.cs`;
-
-	fs.writeFile(path, programSource, function (err) {
-		if (err) {
-			return callback(false, err);
-		}
-
-		return fromFile(path, options, callback, id);
-	});
-};
-
-var fromFile = function fromFile(programPath) {
-	var options =
-		arguments.length <= 1 || arguments[1] === undefined
-			? {}
-			: arguments[1];
-	var callback = arguments[2];
-	const id = arguments[3];
-	const exePath = `${base}/${id}.exe`;
-
-	var mcsCommand = "mcs -o " + exePath + " " + programPath;
-	var monoCommand = "mono";
-
-	exec(mcsCommand, function (error) {
-		if (error) {
-			callback(error);
-			return;
-		}
-
-		const input = options.input
-			? options.input.map((e) => `echo ${e}`)
-			: [];
-
-		const command = `${
-			input.length ? `(${input.join(" & ")}) |` : ""
-		} ${monoCommand} ${exePath}`;
-
-		exec(command, (err, stdout, stder) => {
-			if (err) {
-				callback(true, error, stdout, stder);
-				return;
-			}
-
-			fs.unlink(exePath, console.log);
-			fs.unlink(programPath, console.log);
-
-			callback(false, stdout, stder);
-		});
-	});
-};
-
-const writeCode = function (programPath, programSource) {
-	return new Promise((resolve, reject) => {
-		fs.writeFile(programPath, programSource, (err) => {
-			if (err) return reject(err);
-
-			resolve(programPath);
-		});
-	});
-};
+const { exec } = require("child_process");
 
 /**
- *
- * @param {String} programSource
- * @param {{input: String[] | undefined}} param1
- * @returns output path or throw error
+ * @typedef {import("child_process").ExecException} ExecException
  */
-const compile = function (programSource, { input }) {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const id = v1(),
-				path = `${base}/${id}`,
-				srcPath = path + ".cs",
-				exePath = path + ".exe",
-				outPath = path + ".txt";
 
-			await writeCode(srcPath, programSource);
-
-			const mcsCMD = `mcs -o ${exePath} ${srcPath}`;
-
-			exec(mcsCMD, (err) => {
-				if (err) return reject(err);
-
-				const inputMapping = input
-					? input.map((e) => `echo ${e}`)
-					: [];
-
-				const monoCMD = `${
-					inputMapping.length
-						? `(${inputMapping.join(" & ")}) |`
-						: ""
-				} mono ${exePath} > ${outPath}`;
-
-				exec(monoCMD, (err, stdout, stderr) => {
-					if (err) reject(err);
-
-					if (stderr) reject(stderr);
-
-					fs.unlink(exePath, () => {});
-					fs.unlink(srcPath, () => {});
-					resolve(outPath);
-				});
-			});
-		} catch (error) {
-			reject(error);
-		}
-	});
-};
 /**
- *
- * @param {String} source source code C#
- * @returns {Promise<{srcPath: string, exePath: string, id: string}>}
+ * ignore string of error command being executed
+ * @param err {ExecException} error when execute command
+ * @returns {ExecException}
+ */
+const ignoreDisplayCmd = (err) => {
+    let message = err.message;
+    message = err.message.trim().split('\n');
+    message.shift();
+    message = message.join("\n");
+
+    err.message = new String(message).replaceAll(base, "");
+
+
+    return err;
+}
+
+/**
+ * write code Csharp to file path
+ * @param programPath {string}
+ * @param programSource {string}
+ * @returns {Promise<{programPath: string}>}
+ * @author Phan Thanh Vinh <vinhphan812@gmail.com>
+ */
+const writeFile = function (programPath, programSource) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(programPath, programSource, (err) => {
+            if (err) return reject(err);
+            resolve({ programPath });
+        });
+    });
+};
+
+/**
+ * BUILD FROM SOURCE CODE
+ * <ol>
+ *    <li>source string inserted into file <code>uuid.cs</code></li>
+ *    <li>compile <code>uuid.cs<code> into <code>uuid.exe</code></li>
+ *    <li>remove file <code>uuid.cs</code></li>
+ * </ol>
+ * @param {string} source source code C#
+ * @returns {Promise<{exePath: string, id: string}>}
+ * @author Phan Thanh Vinh <vinhphan812@gmail.com>
  */
 const build = function (source) {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const id = v1(),
-				path = `${base}/${id}`,
-				srcPath = path + ".cs",
-				exePath = path + ".exe";
+    const id = arguments.length > 1 ? arguments[1] : v1();
+    return new Promise(async (resolve, reject) => {
+        try {
+            const path = `${ base }/${ id }`, srcPath = path + ".cs", exePath = path + ".exe";
 
-			await writeCode(srcPath, source);
+            await writeFile(srcPath, source);
 
-			const mcsCMD = `mcs -o ${exePath} ${srcPath}`;
+            const mcsCMD = `mcs -o ${ exePath } ${ srcPath }`;
 
-			exec(mcsCMD, (err) => {
-				if (err) return reject(err);
-				fs.unlink(srcPath, () => {});
-				resolve({ srcPath, exePath, id });
-			});
-		} catch (err) {
-			reject(err);
-		}
-	});
+            exec(mcsCMD, (err) => {
+                if (err) {
+                    removeFile(srcPath)
+                    return reject(ignoreDisplayCmd(err));
+                }
+
+                removeFile(srcPath);
+
+                resolve({ exePath, id });
+            });
+        } catch (err) {
+            console.log(err);
+            reject(err);
+        }
+    });
 };
+
 /**
- *
- * @param {String} outId
- * @param {String} testId
- * @returns
+ *    Run file exe with input list
+ *    <p>This is true only after compiling the code into <code>uuid.exe</code>. Compile code using [Function build]{@link build}</p>
+ *    <ol>
+ *        <li>create new input file by <code>{id}.txt</code></li>
+ *        <li>
+ *            <p>compile with <b>child_process</b> by command of <b>mono</b></p>
+ *            <p>Example: <code>mono [exe file] &lt; [input file]</code></p>
+ *        </li>
+ *        <li>remove input file<`/li>
+ *    </ol>
+ * @param {string} exePath is a path .exe file after compile done
+ * @param {string[]} input is a input list for programs run and result
+ * @param {String} id is a id for testcase create new input file
+ * @returns {Promise<{stdout: string}>}
+ * @author Phan Thanh Vinh <vinhphan812@gmail.com>
  */
-const makeOutPath = (outId, testId) => {
-	return `${outBase}/${outId}_${testId}.txt`;
+const runEXE = function (exePath, input, id) {
+    if (!id)
+        id = v1();
+    return new Promise(async (resolve, reject) => {
+        try {
+            const inputMapping = input ? input.map((e) => e + "\n") : [];
+
+            const { programPath } = await writeFile(`${ base }/${ id }.txt`, inputMapping.join(""));
+
+            const monoCMD = `mono ${ exePath }<${ programPath }`;
+
+            exec(monoCMD, (err, stdout, stderr) => {
+                removeFile(programPath);
+                if (err) reject(ignoreDisplayCmd(err));
+
+                if (stderr) reject(stderr);
+
+                stdout = stdout.trim().replaceAll("\r", "");
+
+                resolve({ stdout });
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
 
-const runWithPath = function (exePath, outPath, input) {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const inputMapping = input ? input.map((e) => `echo ${e}`) : [];
+const removeFile = (path) => fs.unlink(path, () => {
+});
+/**
+ * build, run test return result
+ * @param {string} source source code CSharp
+ * @param {Array<Object>} tcases [TestCase]{@link TestCase}
+ * @returns {Promise<{result: Array<Object>}>}
+ * @author Phan Thanh Vinh <vinhphan812@gmail.com>
+ */
+const run = (source, tcases) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { exePath, id } = await build(source);
+            const result = [];
+            let correctAll = true;
 
-			const monoCMD = `${
-				inputMapping.length ? `(${inputMapping.join(" & ")}) |` : ""
-			} mono ${exePath}`;
+            for (const testCase of tcases) {
+                const res = { id: testCase._id }
+                try {
+                    const { stdout } = await runEXE(exePath, testCase.input.match(/(?<=(['"])\b)(?:(?!\1|\\).|\\.)*(?=\1)/g) || [], testCase._id);
+                    res.success = stdout == testCase.output;
+                    if (!res.success) correctAll = false;
+                    res.output = stdout;
+                } catch (err) {
+                    res.success = false;
+                    res.output = err.message;
+                }
+                result.push(res);
+            }
 
-			exec(monoCMD, (err, stdout, stderr) => {
-				if (err) reject(err);
-
-				if (stderr) reject(stderr);
-
-				resolve({ outPath, stdout });
-			});
-		} catch (error) {
-			reject(error);
-		}
-	});
-};
-
-const compileWithTestCase = function (src, testCases) {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const { srcPath, exePath, id } = await build(src);
-		} catch (error) {
-			reject(error);
-		}
-	});
-};
-
-const removeWithId = (path) => {
-	fs.unlink(path, () => {});
+            removeFile(exePath);
+            resolve({ result, correctAll });
+        } catch (error) {
+            // removeFile(exePath);
+            reject(error);
+        }
+    });
 };
 
 module.exports = {
-	makeOutPath,
-	build,
-	runWithPath,
-	compile,
+    removeFile, build, runEXE, run,
 };
+
+

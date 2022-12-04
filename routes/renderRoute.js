@@ -1,4 +1,5 @@
 const express = require("express");
+const { Router } = express;
 
 /**
  * @import("express")
@@ -22,7 +23,7 @@ const express = require("express");
 /**
  * init router by ExpressJS
  * @param {Routes} routes is a object config for router
- * @returns router for ExpressJS
+ * @returns {Router} router for ExpressJS
  */
 function render({ uses, routes }) {
 	const app = express.Router();
@@ -45,7 +46,7 @@ function render({ uses, routes }) {
  * @param {Route} route
  */
 function renderRoute(app, route) {
-	if (route.method == "all" && !(app instanceof express.Router)) {
+	if (route.method == "all" && !(app instanceof Router)) {
 		// @ts-ignore
 		const allRoute = app.route(route.pattern);
 		if (route.handle) allRoute.all(route.handle);

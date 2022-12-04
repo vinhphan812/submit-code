@@ -1,19 +1,17 @@
 const idValiation = require("../../validations/id.valiations");
 const { render } = require("../renderRoute");
-const { run, submit } = require("../../controllers/user/exercise.controller");
+const { run } = require("../../controllers/user/submit.controller");
+const { submitMiddleware } = require("../../middlewares/submit.middleware");
 
 const routes = {
-	uses: [],
-	routes: [
-		{
-			pattern: "/:id/run",
-			handle: [idValiation(), run],
-		},
-		{
-			pattern: "/:id/submit",
-			handle: [idValiation(), submit],
-		},
-	],
+    uses: [],
+    routes: [
+        {
+            pattern: "/:id/:type",
+            handle: [idValiation(), submitMiddleware, run],
+            method: "post"
+        },
+    ],
 };
 
 const router = render(routes);

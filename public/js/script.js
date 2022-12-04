@@ -41,3 +41,12 @@ window.onload = () => {
 	});
 	if (Onload) Onload();
 };
+
+function renderInput(name, value, placeholder) {
+	return `<input type="text" class="form-control" name="${name}" id="" placeholder="${placeholder}" value='${value}'>`;
+}
+
+function renderTextArea(name, value, placeholder) {
+	return `<textarea placeholder="${placeholder}" class="form-control" name="${name}" rows="3"}>${value}</textarea>`;
+}
+

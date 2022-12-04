@@ -1,0 +1,10 @@
+Viết chương trình yêu cầu nhập người dùng nhập vào một chuỗi họ tên (yourName). Sau đó in ra màn hình dòng chữ với nội dung: "<b>Hello, yourName!</b>"
+Viết chương trình nhập vào một “chuỗi số nguyên” (stringNumber) sau đó chuyển chuỗi này về kiểu số nguyên (intNumber). In ra màn hình giá trị và kiểu dữ liệu của 2 biến stringNumber và intNumber. <i>(Hướng dẫn: sử dụng hàm a.GetType() để lấy kiểu dữ liệu của biến a)</i>
+Viết chương trình yêu cầu người dùng nhập vào 2 số nguyên a và b. Tính và in ra màn hình \nkết quả các phép tính: <b>a + b, a – b, a * b, a / b, a % b</b>
+Viết chương trình yêu cầu người dùng nhập vào 2 số thực a và b. Thực hiện hoán đổi giá trị của a và b. In ra màn hình giá trị của a, b trước và sau khi hoán đổi
+Viết chương trình yêu cầu người dùng nhập 1 số thực r là bán kính của một hình tròn. Tính và in ra màn hình chu vi và diện tích của hình tròn đó (kết quả được làm tròn đến 2 chữ số thập phân). Biết rằng:\n\tChu vi: <b>P = 2Πr</b>\n\tDiện tích: <b>A = Πr²</b>\n\t<i>Hướng dẫn: sử dụng Math.PI</i>
+Viết chương trình yêu cầu người dùng nhập 1 số nguyên n (1 ≤ n ≤ 10). In ra màn hình bảng nhân của n (Yêu cầu: các số hạng và tích được in với độ rộng là 2, canh lề phải)
+Viết chương trình nhập vào một số thực là số giờ làm việc của nhân viên và một số nguyên là số tiền công của mỗi giờ làm việc. <b>Tính và in ra màn hình lương tháng của nhân viên</b>
+Có một số tiền N và các tờ tiền với mệnh giá <b>100, 50, 20, 10, 5, 2, 1</b>. Hãy <b>đổi N thành các tờ tiền sao cho tổng số tờ giấy bạc cần dùng là ít nhất</b>
+Cho một số nguyên là khoảng thời gian diễn ra của một sự kiện (tính bằng giây). Hãy <b>biểu diễn thời gian đó dưới dạng "hh : mm : ss</b>" ("giờ : phút : giây").
+Cho 3 số thực lần lượt là điểm quá trình, điểm thi thực hành và điểm thi cuối kỳ môn Nhập môn lập trình của một sinh viên có trọng số lần lượt là 20%, 30% và 50% (điể  m có giá trị từ 0 đến 10). Hãy <b>tính điểm trung bình môn học</b> (làm tròn đến 1 chữ số thập phân) của sinh viên.

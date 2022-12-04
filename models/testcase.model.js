@@ -6,6 +6,7 @@ const TestCase = initModel(
 		input: String,
 		output: String,
 		name: String,
+		index: {type: Number, default: 0},
 		exercise: { type: ObjectId, ref: "EXERCISE" },
 	},
 	{

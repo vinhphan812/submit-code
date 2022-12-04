@@ -32,6 +32,8 @@ module.exports = {
 
 		if (body.exercises && body.exercises.length) {
 			body.exercises = body.exercises.map((e, i) => {
+				e.description = e.description.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("\\n", "<br>").replaceAll("\\t", "      ")
+
 				e.lesson = lesson.id;
 				e.index = i + 1;
 				return e;

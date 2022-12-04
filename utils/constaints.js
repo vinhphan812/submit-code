@@ -1,7 +1,9 @@
 const morganConfig = `:date[clf]] ":method :url HTTP/:http-version" :status :response-time ms`;
 
-const TEST_THRESHOLD = 5;
-const SUBMIT_THRESHOLD = 1;
+const THRESHOLD = {
+	TEST: 5,
+	SUBMIT: 1
+}
 
 const SCHEMA_OPTION = {
 	versionKey: false,
@@ -14,6 +16,5 @@ const SCHEMA_OPTION = {
 module.exports = {
 	SCHEMA_OPTION,
 	morganConfig,
-	TEST_THRESHOLD,
-	SUBMIT_THRESHOLD,
+	THRESHOLD
 };

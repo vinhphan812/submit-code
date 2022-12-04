@@ -1,10 +1,17 @@
 extend ../../layouts/common.pug
 
 block content
-     .h1= lesson.name
-     .h4= lesson.description
+     .h1 #{lesson.name}: #{lesson.description} 
 
      ul 
           each exercise in lesson.exercises
-               li
-                    a(href=`/lessons/${lesson._id}/exercises/${exercise._id}`)= exercise.name
+               li.card.mb-2
+                    .card-body.row.align-items-center.justify-content-between
+                         .col
+                              h5.card-title= exercise.name
+                              p.card-text.small !{exercise.description}
+                         //- .progress
+                              .progress-bar(role='progressbar' aria-valuenow='10' aria-valuemin='0' aria-valuemax=lesson.count)
+                         .col-2.col-md-1
+                              a.btn.btn-primary.d-flex.justify-content-center.align-items-center(href=`/lessons/${lesson._id}/exercises/${exercise._id}`)
+                                   i.bi.bi-play.fs-3

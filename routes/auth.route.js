@@ -26,4 +26,6 @@ const routes = {
 	],
 };
 
-module.exports = render(routes);
+const router = render(routes);
+
+module.exports = router;
