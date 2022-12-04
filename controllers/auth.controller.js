@@ -19,11 +19,9 @@ module.exports = {
 		const userData = await User.findOne({
 			$and: [
 				{
-					// username: user,
 					$or: [
 						{ username: user },
 						{ email: user },
-						{ phone: user },
 					],
 				},
 				{ is_delete: false, password: md5(pass) },
